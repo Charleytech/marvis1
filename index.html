@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Think</title>
+    <style>
+        /* CSS STYLES */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #007bff;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --white-color: #ffffff;
+            --border-radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: var(--white-color);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .logo img {
+            height: 40px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .page {
+            display: none;
+            padding: 30px;
+        }
+
+        .page.active {
+            display: block;
+        }
+        
+        .page h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: var(--white-color);
+            margin-top: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .link {
+            color: var(--secondary-color);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        #exam-page .timer {
+            position: sticky;
+            top: 0;
+            background: var(--white-color);
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--danger-color);
+            border-bottom: 2px solid var(--light-color);
+            margin: -30px -30px 20px -30px;
+            z-index: 10;
+        }
+
+        #question-container {
+            margin-bottom: 25px;
+        }
+
+        #question-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .options-container .option {
+            display: block;
+            background: var(--light-color);
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .options-container .option:hover {
+            border-color: var(--secondary-color);
+        }
+
+        .options-container .option.selected {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border-color: var(--primary-color);
+        }
+
+        #exam-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        #question-counter {
+            font-weight: 500;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        #result-page .result-box {
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: var(--border-radius);
+        }
+
+        #result-page .result-box.pass {
+            background-color: #e9f7ef;
+            border: 2px solid var(--success-color);
+        }
+
+        #result-page .result-box.fail {
+            background-color: #fdecea;
+            border: 2px solid var(--danger-color);
+        }
+
+        #result-page h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        #result-page p {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        #result-page .pass-message { color: var(--success-color); }
+        #result-page .fail-message { color: var(--danger-color); }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-table th, .admin-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .admin-table th {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+        .admin-table tr:nth-child(even) {
+            background-color: var(--light-color);
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header h1 { font-size: 1.2rem; }
+            .header .logo img { height: 30px; }
+            .page { padding: 20px; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 0; min-height: 100svh; }
+            .app-container { border-radius: 0; box-shadow: none; min-height: 100svh; }
+            .header { padding: 15px; }
+            .admin-table th, .admin-table td { padding: 8px; font-size: 0.9rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <div class="logo">
+                <img src="https://i.pravatar.cc/150?u=tunde.williams@bank.com" alt="Logo">
+                <h1>Fast Think</h1>
+            </div>
+            <button id="logout-btn" class="btn btn-secondary" style="display: none; width: auto; padding: 8px 12px; font-size: 0.9rem;">Logout</button>
+        </div>
+        
+        <!-- PAGES CONTAINER -->
+
+        <!-- Login Page -->
+        <div id="login-page" class="page active">
+            <h2>Welcome to Marcel Boys Exam</h2>
+            <div id="login-error" class="error-message" style="display:none;"></div>
+            <form id="student-login-form">
+                <h3>Student Login</h3>
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <a href="#" id="show-signup" class="link">First time? Sign Up here</a>
+                <a href="#" id="show-forgot-password" class="link">Forgot Password?</a>
+            </form>
+            <hr style="margin: 30px 0;">
+            <form id="admin-login-form">
+                <h3>Admin Login</h3>
+                <div class="form-group">
+                    <label for="admin-username">Admin Username</label>
+                    <input type="text" id="admin-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Admin Password</label>
+                    <input type="password" id="admin-password" required>
+                </div>
+                <button type="submit" class="btn btn-secondary">Admin Login</button>
+            </form>
+        </div>
+
+        <!-- Signup Page -->
+        <div id="signup-page" class="page">
+            <h2>Student Registration</h2>
+            <div id="signup-error" class="error-message" style="display:none;"></div>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" required>
+                </div>
+                 <div class="form-group">
+                    <label for="signup-stream">Select Stream</label>
+                    <select id="signup-stream" required>
+                        <option value="">-- Choose your stream --</option>
+                        <option value="Science">Science</option>
+                        <option value="Arts">Arts</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-password">Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+                <a href="#" id="show-login" class="link">Already have an account? Login</a>
+            </form>
+        </div>
+
+        <!-- Forgot Password Page -->
+        <div id="forgot-password-page" class="page">
+            <h2>Retrieve Password</h2>
+            <div id="forgot-password-message" class="error-message" style="display:none;"></div>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="forgot-username">Enter your Username</label>
+                    <input type="text" id="forgot-username" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Retrieve Password</button>
+                <a href="#" id="back-to-login" class="link">Back to Login</a>
+            </form>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="student-dashboard" class="page">
+            <h2 id="welcome-message"></h2>
+            <h3>Exam Instructions</h3>
+            <ul>
+                <li>This exam consists of <strong>50 questions</strong>. Total marks: <strong>100</strong>. Pass mark: <strong>50</strong>.</li>
+                <li>You have <strong>20 minutes</strong> to complete the exam.</li>
+                <li>You can navigate back and forth between questions.</li>
+                <li>Your answers are saved as you navigate. The exam submits automatically when the timer ends.</li>
+                <li>Click the "Submit" button on the last question to finish.</li>
+            </ul>
+            <br>
+            <button id="start-exam-btn" class="btn btn-primary">Start Exam</button>
+        </div>
+
+        <!-- Exam Page -->
+        <div id="exam-page" class="page">
+            <div id="timer" class="timer">Time Left: 20:00</div>
+            <div id="question-container">
+                <p id="question-text"></p>
+                <div id="options-container" class="options-container"></div>
+            </div>
+            <div id="exam-nav">
+                <button id="prev-question-btn" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">Previous</button>
+                <span id="question-counter"></span>
+                <button id="next-question-btn" class="btn btn-primary" style="width: auto; padding: 10px 20px;">Next</button>
+            </div>
+        </div>
+
+        <!-- Result Page -->
+        <div id="result-page" class="page">
+            <h2>Exam Result</h2>
+            <div id="result-box" class="result-box">
+                <h3 id="result-message"></h3>
+                <p><strong>Your Score:</strong> <span id="score"></span> / 100</p>
+                <p><strong>Grade:</strong> <span id="grade"></span></p>
+                <p id="final-message"></p>
+            </div>
+             <button id="back-to-dashboard-btn" class="btn btn-secondary">Close</button>
+        </div>
+        
+        <!-- Admin Dashboard -->
+        <div id="admin-dashboard" class="page">
+            <h2>Admin Dashboard - Student Results</h2>
+            <p>Below are the records of all students who have completed the exam.</p>
+            <div style="overflow-x:auto;">
+                <table id="results-table" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Stream</th>
+                            <th>Score</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<script>
+// JAVASCRIPT LOGIC
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DOM ELEMENTS ---
+    const pages = document.querySelectorAll('.page');
+    // ... (All other DOM elements are the same)
+    const loginPage = document.getElementById('login-page');
+    const signupPage = document.getElementById('signup-page');
+    const forgotPasswordPage = document.getElementById('forgot-password-page');
+    const studentDashboard = document.getElementById('student-dashboard');
+    const examPage = document.getElementById('exam-page');
+    const resultPage = document.getElementById('result-page');
+    const adminDashboard = document.getElementById('admin-dashboard');
+
+    const studentLoginForm = document.getElementById('student-login-form');
+    const adminLoginForm = document.getElementById('admin-login-form');
+    const signupForm = document.getElementById('signup-form');
+    const forgotPasswordForm = document.getElementById('forgot-password-form');
+
+    const showSignupLink = document.getElementById('show-signup');
+    const showLoginLink = document.getElementById('show-login');
+    const showForgotPasswordLink = document.getElementById('show-forgot-password');
+    const backToLoginLink = document.getElementById('back-to-login');
+    
+    const loginError = document.getElementById('login-error');
+    const signupError = document.getElementById('signup-error');
+    const forgotPasswordMessage = document.getElementById('forgot-password-message');
+    
+    const welcomeMessage = document.getElementById('welcome-message');
+    const startExamBtn = document.getElementById('start-exam-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    
+    const timerEl = document.getElementById('timer');
+    const questionTextEl = document.getElementById('question-text');
+    const optionsContainerEl = document.getElementById('options-container');
+    const prevQuestionBtn = document.getElementById('prev-question-btn');
+    const nextQuestionBtn = document.getElementById('next-question-btn');
+    const questionCounterEl = document.getElementById('question-counter');
+
+    const resultBox = document.getElementById('result-box');
+    const resultMessage = document.getElementById('result-message');
+    const scoreEl = document.getElementById('score');
+    const gradeEl = document.getElementById('grade');
+    const finalMessage = document.getElementById('final-message');
+    const backToDashboardBtn = document.getElementById('back-to-dashboard-btn');
+
+    const resultsTbody = document.getElementById('results-tbody');
+    
+    // --- STATE MANAGEMENT ---
+    let currentUser = null;
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let score = 0;
+    let timerInterval;
+    const EXAM_DURATION = 20 * 60; // 20 minutes in seconds
+
+    // --- NEW TOUGH QUESTION BANK ---
+    const questions = {
+        English: [
+            { q: "Identify the literary device in the sentence: 'The politician's speech was a roaring fire, igniting passion in the crowd.'", o: ["Simile", "Metaphor", "Personification"], a: "Metaphor" },
+            { q: "Which of the following sentences uses a dangling modifier? '", o: ["Running for the bus, the rain started to pour.", "After finishing my homework, I went to bed.", "The book on the table belongs to me."], a: "Running for the bus, the rain started to pour." },
+            { q: "The word 'ephemeral' most nearly means:", o: ["Everlasting", "Transparent", "Short-lived"], a: "Short-lived" },
+            { q: "Choose the sentence with the correct subject-verb agreement.", o: ["The committee decide on the new policy.", "A bouquet of yellow roses lend color to the room.", "The data from the experiment supports the hypothesis."], a: "The data from the experiment supports the hypothesis." },
+            { q: "In Shakespeare's 'Julius Caesar', the phrase 'Et tu, Brute?' signifies what emotion?", o: ["Anger", "Confusion", "Betrayal"], a: "Betrayal" },
+            { q: "A story in which characters and events are symbols for ideas and truths is known as a(n):", o: ["Parody", "Allegory", "Satire"], a: "Allegory" },
+            { q: "What is the function of the semicolon in this sentence: 'I have a big test tomorrow; I can't go out tonight.'?", o: ["To join two independent but related clauses", "To introduce a list", "To show possession"], a: "To join two independent but related clauses" },
+            { q: "The 'denouement' of a story refers to its:", o: ["Climax", "Introduction", "Resolution"], a: "Resolution" },
+            { q: "Which word is an antonym for 'loquacious'?", o: ["Talkative", "Taciturn", "Garrulous"], a: "Taciturn" },
+            { q: "A 'pyrrhic victory' is one that:", o: ["Is easily won", "Comes at too great a cost", "Is achieved against a stronger foe"], a: "Comes at too great a cost" }
+        ],
+        Mathematics: [
+            { q: "If a circle has a circumference of 16π cm, what is its area?", o: ["32π cm²", "64π cm²", "256π cm²"], a: "64π cm²" },
+            { q: "Solve for x in the equation: 3(x - 2) + 4x = 5(x + 2)", o: ["x = 8", "x = 4", "x = 2"], a: "x = 8" },
+            { q: "A bag contains 5 red balls and 7 blue balls. What is the probability of drawing two blue balls in a row without replacement?", o: ["49/144", "42/132", "35/132"], a: "42/132" },
+            { q: "The sum of the interior angles of a hexagon is:", o: ["360°", "540°", "720°"], a: "720°" },
+            { q: "If log₂(x) = 5, what is the value of x?", o: ["10", "25", "32"], a: "32" },
+            { q: "A car travels 60 km/h for 2 hours and then 80 km/h for 3 hours. What is its average speed for the entire journey?", o: ["70 km/h", "72 km/h", "75 km/h"], a: "72 km/h" },
+            { q: "In a right-angled triangle, the side opposite the right angle is called the:", o: ["Adjacent", "Opposite", "Hypotenuse"], a: "Hypotenuse" },
+            { q: "Factorize completely: x² - 81", o: ["(x - 9)(x - 9)", "(x + 9)(x - 9)", "(x + 81)(x - 1)"], a: "(x + 9)(x - 9)" },
+            { q: "What is the 10th term of the arithmetic sequence 3, 7, 11, ...?", o: ["39", "43", "35"], a: "39" },
+            { q: "If f(x) = 2x² - 3x + 1, what is f(-2)?", o: ["15", "3", "9"], a: "15" }
+        ],
+        Government: [
+            { q: "A key difference between a unitary and a federal system of government lies in the:", o: ["Number of political parties", "Division of powers between central and regional authorities", "Method of electing the president"], a: "Division of powers between central and regional authorities" },
+            { q: "The principle of 'Separation of Powers' is primarily designed to:", o: ["Ensure efficient governance", "Prevent the abuse of power", "Promote national unity"], a: "Prevent the abuse of power" },
+            { q: "In a parliamentary system, the head of government is the Prime Minister, who is typically:", o: ["Directly elected by the people", "The monarch or ceremonial president", "The leader of the majority party in the legislature"], a: "The leader of the majority party in the legislature" },
+            { q: "A 'veto' is the power to:", o: ["Unilaterally reject a legislative bill", "Declare war", "Appoint judges"], a: "Unilaterally reject a legislative bill" },
+            { q: "Which political ideology advocates for a classless society and the abolition of private property?", o: ["Capitalism", "Communism", "Fascism"], a: "Communism" },
+            { q: "The concept of 'rule of law' implies that:", o: ["The rulers are above the law", "Everyone, including government officials, is subject to the law", "Laws are made by a single, absolute ruler"], a: "Everyone, including government officials, is subject to the law" },
+            { q: "What is the primary function of an opposition party in a democracy?", o: ["To obstruct all government policies", "To provide an alternative government and scrutinize the ruling party", "To form a coalition with the ruling party"], a: "To provide an alternative government and scrutinize the ruling party" },
+            { q: "A bicameral legislature is one that has:", o: ["One legislative house", "Two legislative houses", "Three branches of government"], a: "Two legislative houses" },
+            { q: "Which of these is NOT a legitimate source of a country's constitution?", o: ["Judicial precedents", "Acts of Parliament", "A military decree from a coup"], a: "A military decree from a coup" },
+            { q: "Gerrymandering refers to the practice of:", o: ["Manipulating electoral district boundaries to favor one party", "A filibuster in the legislature", "Casting a vote of no confidence"], a: "Manipulating electoral district boundaries to favor one party" }
+        ],
+        Economics: [
+            { q: "If the price elasticity of demand for a product is -0.5, a 10% increase in price will lead to a:", o: ["5% decrease in quantity demanded", "10% decrease in quantity demanded", "20% decrease in quantity demanded"], a: "5% decrease in quantity demanded" },
+            { q: "Which of the following is an example of an expansionary fiscal policy?", o: ["Increasing interest rates", "Decreasing government spending", "Cutting taxes"], a: "Cutting taxes" },
+            { q: "Opportunity cost is best defined as:", o: ["The total monetary expense of an activity", "The value of the next-best alternative forgone", "The cost of production for a given good"], a: "The value of the next-best alternative forgone" },
+            { q: "A market structure with many firms selling differentiated products is known as:", o: ["Perfect competition", "Monopoly", "Monopolistic competition"], a: "Monopolistic competition" },
+            { q: "The 'Law of Diminishing Marginal Utility' states that:", o: ["Total satisfaction decreases as you consume more of a good", "The satisfaction from each additional unit consumed decreases", "The price of a good decreases as more is consumed"], a: "The satisfaction from each additional unit consumed decreases" },
+            { q: "Which of these would cause a shift in the supply curve for coffee to the left?", o: ["A new technology that makes harvesting cheaper", "A widespread disease affecting coffee plants", "A decrease in the price of tea, a substitute"], a: "A widespread disease affecting coffee plants" },
+            { q: "Stagflation is a period characterized by:", o: ["High inflation and high unemployment", "Low inflation and low unemployment", "High economic growth and high inflation"], a: "High inflation and high unemployment" },
+            { q: "In international trade, a 'tariff' is a:", o: ["Limit on the quantity of a good that can be imported", "Tax on imported goods", "Subsidy for domestic producers"], a: "Tax on imported goods" },
+            { q: "Which of the following is included in Nigeria's Gross Domestic Product (GDP)?", o: ["The sale of a used car", "Services provided by a Nigerian lawyer in Lagos", "Money received from a relative working abroad"], a: "Services provided by a Nigerian lawyer in Lagos" },
+            { q: "The functions of money include all the following EXCEPT:", o: ["Medium of exchange", "Store of value", "Measure of inequality"], a: "Measure of inequality" }
+        ],
+        Current_Affairs: [
+            { q: "The economic bloc of West African states is known as:", o: ["SADC", "ECOWAS", "EAC"], a: "ECOWAS" },
+            { q: "Which of these organizations is primarily focused on global health issues?", o: ["NATO", "IMF", "WHO"], a: "WHO" },
+            { q: "The 'Sustainable Development Goals' (SDGs) were set by which international body?", o: ["The World Bank", "The African Union", "The United Nations"], a: "The United Nations" },
+            { q: "The recent global push towards electric vehicles is primarily aimed at combating:", o: ["Traffic congestion", "Climate change", "Economic recession"], a: "Climate change" },
+            { q: "The term 'BRICS' refers to an association of which emerging economies?", o: ["Britain, Russia, India, China, Spain", "Brazil, Russia, India, China, South Africa", "Belgium, Romania, Italy, Canada, Sweden"], a: "Brazil, Russia, India, China, South Africa" },
+            { q: "The headquarters of the African Union (AU) is located in:", o: ["Abuja, Nigeria", "Nairobi, Kenya", "Addis Ababa, Ethiopia"], a: "Addis Ababa, Ethiopia" },
+            { q: "Which tech entrepreneur is associated with SpaceX and Tesla?", o: ["Jeff Bezos", "Elon Musk", "Bill Gates"], a: "Elon Musk" },
+            { q: "The conflict that began in 2022 between Russia and Ukraine has significantly impacted the global supply of:", o: ["Coffee and cocoa", "Grain and natural gas", "Diamonds and gold"], a: "Grain and natural gas" },
+            { q: "The Nigerian government's removal of the fuel subsidy in 2023 was primarily aimed at:", o: ["Increasing fuel consumption", "Deregulation of the downstream oil sector", "Crashing the price of crude oil"], a: "Deregulation of the downstream oil sector" },
+            { q: "What is 'Fintech'?", o: ["A new type of fishing technology", "Technology used to improve financial services", "The study of fish in different cultures"], a: "Technology used to improve financial services" }
+        ],
+        Physics: [
+            { q: "According to Archimedes' principle, the buoyant force on a submerged object is equal to the:", o: ["Mass of the object", "Volume of the object", "Weight of the fluid displaced by the object"], a: "Weight of the fluid displaced by the object" },
+            { q: "A 10 kg object is accelerated from rest to a velocity of 5 m/s. What is the work done on the object?", o: ["50 J", "125 J", "250 J"], a: "125 J" },
+            { q: "The phenomenon where light bends as it passes from one medium to another is called:", o: ["Reflection", "Diffraction", "Refraction"], a: "Refraction" },
+            { q: "Which law states that for every action, there is an equal and opposite reaction?", o: ["Newton's First Law", "Newton's Second Law", "Newton's Third Law"], a: "Newton's Third Law" },
+            { q: "A transformer with more turns in the secondary coil than the primary coil is a:", o: ["Step-up transformer", "Step-down transformer", "Autotransformer"], a: "Step-up transformer" },
+            { q: "The half-life of a radioactive substance is 10 days. If you start with 80g, how much will be left after 30 days?", o: ["40g", "20g", "10g"], a: "10g" },
+            { q: "Escape velocity is the speed required to:", o: ["Orbit a planet", "Break the sound barrier", "Overcome a planet's gravitational pull completely"], a: "Overcome a planet's gravitational pull completely" },
+            { q: "If the resistance in a simple circuit is doubled while the voltage remains constant, the current will be:", o: ["Doubled", "Halved", "Unchanged"], a: "Halved" },
+            { q: "Which of the following electromagnetic waves has the highest frequency?", o: ["Radio waves", "Microwaves", "Gamma rays"], a: "Gamma rays" },
+            { q: "The specific latent heat of fusion is the energy required to:", o: ["Raise the temperature of 1kg of a substance by 1°C", "Change 1kg of a substance from solid to liquid at a constant temperature", "Change 1kg of a substance from liquid to gas at a constant temperature"], a: "Change 1kg of a substance from solid to liquid at a constant temperature" }
+        ],
+        Chemistry: [
+            { q: "In the reaction 2H₂(g) + O₂(g) → 2H₂O(l), what is the mole ratio of hydrogen to water?", o: ["2:1", "1:1", "1:2"], a: "1:1" },
+            { q: "Which of these is a characteristic of a reaction at equilibrium?", o: ["The concentrations of reactants and products are equal", "The reaction has stopped completely", "The rates of the forward and reverse reactions are equal"], a: "The rates of the forward and reverse reactions are equal" },
+            { q: "An element has an atomic number of 13 and a mass number of 27. How many neutrons does it have?", o: ["13", "14", "27"], a: "14" },
+            { q: "The process of breaking down a compound using electricity is called:", o: ["Hydrolysis", "Electrolysis", "Combustion"], a: "Electrolysis" },
+            { q: "Which type of bonding is responsible for the high boiling point of water?", o: ["Ionic bonding", "Covalent bonding", "Hydrogen bonding"], a: "Hydrogen bonding" },
+            { q: "An oxidizing agent is a substance that:", o: ["Loses electrons", "Gains electrons", "Is neutral"], a: "Gains electrons" },
+            { q: "Which of the following is an allotrope of carbon?", o: ["Silicon", "Diamond", "Quartz"], a: "Diamond" },
+            { q: "According to Le Chatelier's principle, increasing the pressure on the equilibrium N₂(g) + 3H₂(g) ⇌ 2NH₃(g) will:", o: ["Shift the equilibrium to the left", "Shift the equilibrium to the right", "Have no effect on the equilibrium"], a: "Shift the equilibrium to the right" },
+            { q: "The functional group of an alcohol is:", o: ["-COOH", "-OH", "-CHO"], a: "-OH" },
+            { q: "What is the pH of a 0.01 M solution of HCl (a strong acid)?", o: ["1", "2", "12"], a: "2" }
+        ],
+        Biology: [
+            { q: "In genetics, what term describes an organism that has two identical alleles for a particular trait (e.g., TT or tt)?", o: ["Heterozygous", "Homozygous", "Phenotype"], a: "Homozygous" },
+            { q: "Which process is responsible for the exchange of gases (oxygen and carbon dioxide) in the lungs?", o: ["Osmosis", "Active transport", "Diffusion"], a: "Diffusion" },
+            { q: "The main function of the xylem in a plant is to:", o: ["Transport manufactured food from the leaves", "Provide structural support only", "Transport water and minerals from the roots"], a: "Transport water and minerals from the roots" },
+            { q: "Meiosis is a type of cell division that results in:", o: ["Two diploid cells", "Four haploid cells", "Two haploid cells"], a: "Four haploid cells" },
+            { q: "Which part of the human brain is primarily responsible for balance, posture, and coordination?", o: ["Cerebrum", "Cerebellum", "Medulla oblongata"], a: "Cerebellum" },
+            { q: "The theory of evolution by natural selection was proposed by:", o: ["Gregor Mendel", "Charles Darwin", "Louis Pasteur"], a: "Charles Darwin" },
+            { q: "In the human digestive system, where does the majority of nutrient absorption take place?", o: ["Stomach", "Large intestine", "Small intestine"], a: "Small intestine" },
+            { q: "A symbiotic relationship where one organism benefits and the other is harmed is known as:", o: ["Mutualism", "Commensalism", "Parasitism"], a: "Parasitism" },
+            { q: "The role of an enzyme in a biochemical reaction is to:", o: ["Increase the activation energy", "Act as a reactant", "Decrease the activation energy"], a: "Decrease the activation energy" },
+            { q: "Which of the following blood components is primarily responsible for the immune response?", o: ["Red blood cells", "Platelets", "White blood cells (Leukocytes)"], a: "White blood cells (Leukocytes)" }
+        ]
+    };
+    
+    // --- LOCAL STORAGE HELPERS (Unchanged) ---
+    const getUsers = () => JSON.parse(localStorage.getItem('ecoUsers')) || {};
+    const saveUsers = (users) => localStorage.setItem('ecoUsers', JSON.stringify(users));
+    const getResults = () => JSON.parse(localStorage.getItem('ecoResults')) || [];
+    const saveResults = (results) => localStorage.setItem('ecoResults', JSON.stringify(results));
+
+    // --- PAGE NAVIGATION (Unchanged) ---
+    const showPage = (pageId) => {
+        pages.forEach(page => page.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        if (pageId === 'student-dashboard' || pageId === 'admin-dashboard') {
+            logoutBtn.style.display = 'block';
+        } else if (pageId === 'login-page') {
+             logoutBtn.style.display = 'none';
+        }
+    };
+    
+    // --- UI/ERROR MESSAGES (Unchanged) ---
+    const showError = (element, message) => { /* ... */ element.textContent = message; element.style.display = 'block'; };
+    const hideError = (element) => { /* ... */ element.style.display = 'none'; };
+
+    // --- EVENT LISTENERS & LOGIC (Unchanged part) ---
+    showSignupLink.addEventListener('click', (e) => { e.preventDefault(); showPage('signup-page'); });
+    showLoginLink.addEventListener('click', (e) => { e.preventDefault(); showPage('login-page'); });
+    showForgotPasswordLink.addEventListener('click', (e) => { e.preventDefault(); showPage('forgot-password-page'); });
+    backToLoginLink.addEventListener('click', (e) => { e.preventDefault(); showPage('login-page'); });
+    backToDashboardBtn.addEventListener('click', handleLogout);
+    
+    // --- FORM SUBMISSIONS (Unchanged) ---
+    signupForm.addEventListener('submit', (e) => { /* ... (same as before) */ 
+        e.preventDefault();
+        hideError(signupError);
+        const name = document.getElementById('signup-name').value;
+        const username = document.getElementById('signup-username').value.toLowerCase();
+        const stream = document.getElementById('signup-stream').value;
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+        if (!name || !username || !stream || !password || !confirmPassword) return showError(signupError, 'All fields are required.');
+        if (password !== confirmPassword) return showError(signupError, 'Passwords do not match.');
+
+        const users = getUsers();
+        if (users[username]) return showError(signupError, 'Username already exists.');
+
+        users[username] = { name, password, stream, hasTakenExam: false };
+        saveUsers(users);
+        alert('Registration successful! Please login.');
+        signupForm.reset();
+        showPage('login-page');
+    });
+    studentLoginForm.addEventListener('submit', (e) => { /* ... (same as before) */
+        e.preventDefault();
+        hideError(loginError);
+        const username = document.getElementById('login-username').value.toLowerCase();
+        const password = document.getElementById('login-password').value;
+        
+        const users = getUsers();
+        const user = users[username];
+
+        if (!user || user.password !== password) return showError(loginError, 'Invalid username or password.');
+        if (user.hasTakenExam) return showError(loginError, 'You have already taken the exam. This account cannot be used again.');
+
+        currentUser = { username, ...user };
+        studentLoginForm.reset();
+        loadStudentDashboard();
+    });
+    adminLoginForm.addEventListener('submit', (e) => { /* ... (same as before) */
+        e.preventDefault();
+        hideError(loginError);
+        const username = document.getElementById('admin-username').value;
+        const password = document.getElementById('admin-password').value;
+        
+        if (username === 'admin' && password === 'admin123') {
+            adminLoginForm.reset();
+            loadAdminDashboard();
+        } else {
+            showError(loginError, 'Invalid admin credentials.');
+        }
+    });
+    forgotPasswordForm.addEventListener('submit', (e) => { /* ... (same as before) */
+        e.preventDefault();
+        const username = document.getElementById('forgot-username').value.toLowerCase();
+        const users = getUsers();
+        const user = users[username];
+
+        if (user) {
+            forgotPasswordMessage.textContent = `Password for ${username} is: ${user.password}`;
+            forgotPasswordMessage.style.color = 'var(--success-color)';
+        } else {
+            forgotPasswordMessage.textContent = 'Username not found.';
+            forgotPasswordMessage.style.color = 'var(--danger-color)';
+        }
+        forgotPasswordMessage.style.display = 'block';
+    });
+    logoutBtn.addEventListener('click', handleLogout);
+    
+    // --- Functions (Unchanged) ---
+    function handleLogout() { /* ... (same as before) */
+        currentUser = null;
+        clearInterval(timerInterval);
+        studentLoginForm.reset();
+        adminLoginForm.reset();
+        signupForm.reset();
+        showPage('login-page');
+    }
+    function loadStudentDashboard() { /* ... (same as before) */
+        welcomeMessage.textContent = `Welcome, ${currentUser.name}!`;
+        showPage('student-dashboard');
+    }
+    function loadAdminDashboard() { /* ... (same as before) */
+        const results = getResults();
+        resultsTbody.innerHTML = '';
+        if (results.length === 0) {
+            resultsTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No results to display yet.</td></tr>';
+        } else {
+            const passedStudents = results.filter(r => r.status === 'Passed');
+            passedStudents.forEach(res => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${res.name}</td><td>${res.username}</td><td>${res.stream}</td><td>${res.score}</td><td>${res.grade}</td><td><span style="color: var(--success-color); font-weight: bold;">${res.status}</span></td>`;
+                resultsTbody.appendChild(row);
+            });
+        }
+        showPage('admin-dashboard');
+    }
+    
+    // --- EXAM LOGIC (UPDATED FOR NAVIGATION) ---
+    startExamBtn.addEventListener('click', startExam);
+
+    // NEW: Previous Button Logic
+    prevQuestionBtn.addEventListener('click', () => {
+        saveAnswer(); // Save answer of current question before moving
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion();
+        }
+    });
+
+    // UPDATED: Next Button Logic
+    nextQuestionBtn.addEventListener('click', () => {
+        saveAnswer(); // Save answer of current question
+        // If on the last question, the button acts as a submit button
+        if (currentQuestionIndex === currentQuestions.length - 1) {
+            submitExam();
+        } else {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+    });
+    
+    function startExam() {
+        // Compile questions for the student
+        const stream = currentUser.stream;
+        let subjects = ['English', 'Mathematics'];
+        if (stream === 'Science') {
+            subjects.push('Physics', 'Chemistry', 'Biology');
+        } else { // Arts
+            subjects.push('Government', 'Economics', 'Current_Affairs');
+        }
+        
+        currentQuestions = [];
+        subjects.forEach(subject => {
+            currentQuestions.push(...questions[subject]);
+        });
+        
+        // Reset state
+        currentQuestionIndex = 0;
+        userAnswers = new Array(currentQuestions.length).fill(null);
+        score = 0;
+        
+        loadQuestion();
+        showPage('exam-page');
+        startTimer();
+        logoutBtn.style.display = 'none';
+    }
+
+    function startTimer() {
+        let timeLeft = EXAM_DURATION;
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerEl.textContent = `Time Left: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("Time's up! Your exam will be submitted automatically.");
+                submitExam();
+            }
+        }, 1000);
+    }
+    
+    // UPDATED: Load question function with navigation handling
+    function loadQuestion() {
+        const question = currentQuestions[currentQuestionIndex];
+        questionTextEl.textContent = `${currentQuestionIndex + 1}. ${question.q}`;
+        optionsContainerEl.innerHTML = '';
+        
+        question.o.forEach(optionText => {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'option';
+            optionDiv.textContent = optionText;
+            
+            // NEW: Highlight previously selected answer
+            if (userAnswers[currentQuestionIndex] === optionText) {
+                optionDiv.classList.add('selected');
+            }
+            
+            optionDiv.addEventListener('click', () => selectOption(optionDiv));
+            optionsContainerEl.appendChild(optionDiv);
+        });
+        
+        questionCounterEl.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
+        
+        // NEW: Manage button states
+        prevQuestionBtn.disabled = (currentQuestionIndex === 0);
+        nextQuestionBtn.textContent = (currentQuestionIndex === currentQuestions.length - 1) ? 'Submit' : 'Next';
+    }
+    
+    // UPDATED: Select option and save answer are now two distinct steps
+    function selectOption(selectedDiv) {
+        const allOptions = optionsContainerEl.querySelectorAll('.option');
+        allOptions.forEach(opt => opt.classList.remove('selected'));
+        selectedDiv.classList.add('selected');
+        // The answer is saved only when navigating or submitting
+    }
+
+    function saveAnswer() {
+        const selectedOption = optionsContainerEl.querySelector('.option.selected');
+        userAnswers[currentQuestionIndex] = selectedOption ? selectedOption.textContent : null;
+    }
+    
+    // SUBMIT EXAM (Unchanged logic, but now called explicitly)
+    function submitExam() {
+        clearInterval(timerInterval);
+        
+        score = 0;
+        currentQuestions.forEach((question, index) => {
+            if (userAnswers[index] === question.a) {
+                score += 2;
+            }
+        });
+        
+        const percentage = score;
+        let grade, status, finalMsg, congratulationMsg;
+        if (percentage >= 50) {
+            status = 'Passed';
+            finalMsg = "Congratulations! You won!";
+            congratulationMsg = `Record Saved! Result can be published.`;
+            if (percentage >= 90) grade = 'A+';
+            else if (percentage >= 80) grade = 'A';
+            else if (percentage >= 70) grade = 'B';
+            else if (percentage >= 60) grade = 'C';
+            else grade = 'D';
+        } else {
+            status = 'Failed';
+            finalMsg = "Sorry, you failed.";
+            congratulationMsg = "Try again next session.";
+            grade = 'F';
+        }
+        
+        const results = getResults();
+        results.push({
+            name: currentUser.name,
+            username: currentUser.username,
+            stream: currentUser.stream,
+            score,
+            grade,
+            status
+        });
+        saveResults(results);
+        
+        const users = getUsers();
+        users[currentUser.username].hasTakenExam = true;
+        saveUsers(users);
+
+        scoreEl.textContent = score;
+        gradeEl.textContent = grade;
+        resultMessage.textContent = finalMsg;
+        finalMessage.textContent = congratulationMsg;
+        
+        resultBox.className = 'result-box';
+        if (status === 'Passed') {
+            resultBox.classList.add('pass');
+            resultMessage.className = 'pass-message';
+        } else {
+            resultBox.classList.add('fail');
+            resultMessage.className = 'fail-message';
+        }
+
+        showPage('result-page');
+    }
+});
+</script>
+
+</body>
+</html>
